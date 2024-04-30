@@ -1,5 +1,6 @@
 package com.septemarch.test.service.impl;
 
+import com.septemarch.test.dto.SearchDTO;
 import com.septemarch.test.entitis.User;
 import com.septemarch.test.exceptions.InvalidData;
 import com.septemarch.test.properties.AgeProperties;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +54,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<User> searchUsers(SearchDTO searchDTO) {
+        if (searchDTO.getFrom().isAfter(searchDTO.getTo())
+            || searchDTO.getFrom().isEqual(searchDTO.getTo())){
+            throw new InvalidData("The From data is after To date", HttpStatus.BAD_REQUEST);
+        }
+
+        return getAllUsers().stream()
+                .filter(e ->
+                        (e.getBirth_date().isAfter(searchDTO.getFrom()) && e.getBirth_date().isBefore(searchDTO.getTo()))
+                )
+                .collect(Collectors.toList());
     }
 }

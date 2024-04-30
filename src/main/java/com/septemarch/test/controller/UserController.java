@@ -1,5 +1,6 @@
 package com.septemarch.test.controller;
 
+import com.septemarch.test.dto.SearchDTO;
 import com.septemarch.test.entitis.User;
 import com.septemarch.test.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,10 @@ public class UserController {
         userService.updateUser(user);
     }
 
+    @PostMapping("/search")
+    public List<User> searchUser(@RequestBody SearchDTO searchDTO) {
+        return userService.searchUsers(searchDTO);
+    }
 
 
 
